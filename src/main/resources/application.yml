@@ -11,12 +11,14 @@ spring:
     hibernate:
       ddl-auto: create-drop
     defer-datasource-initialization: true
+    show-sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/spec_demo
     username: dev-ninja
     password: ujac8ozJExiHFfcTNPd6
     driver-class-name: org.postgresql.Driver
   sql:
+
     init:
       mode: always
   application:
