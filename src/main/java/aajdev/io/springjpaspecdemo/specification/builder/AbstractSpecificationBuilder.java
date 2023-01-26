@@ -1,8 +1,8 @@
-package aajdev.io.springjpaspecdemo.specification.builders;
+package aajdev.io.springjpaspecdemo.specification.builder;
 
 import aajdev.io.springjpaspecdemo.specification.AbstractSpecification;
-import aajdev.io.springjpaspecdemo.util.SearchOperation;
-import aajdev.io.springjpaspecdemo.util.SpecSearchCriteria;
+import aajdev.io.springjpaspecdemo.specification.util.SearchOperation;
+import aajdev.io.springjpaspecdemo.specification.util.SpecSearchCriteria;
 
 import java.util.List;
 

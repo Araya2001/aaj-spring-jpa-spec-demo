@@ -2,8 +2,8 @@ package aajdev.io.springjpaspecdemo.service;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
 import aajdev.io.springjpaspecdemo.repository.WarehousetRepository;
-import aajdev.io.springjpaspecdemo.specification.builders.WarehouseSpecificationBuilder;
-import aajdev.io.springjpaspecdemo.util.SearchOperation;
+import aajdev.io.springjpaspecdemo.specification.builder.WarehouseSpecificationBuilder;
+import aajdev.io.springjpaspecdemo.specification.util.SearchOperation;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;

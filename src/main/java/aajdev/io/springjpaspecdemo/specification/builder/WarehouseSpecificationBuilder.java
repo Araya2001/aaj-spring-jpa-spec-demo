@@ -1,8 +1,8 @@
-package aajdev.io.springjpaspecdemo.specification.builders;
+package aajdev.io.springjpaspecdemo.specification.builder;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
 import aajdev.io.springjpaspecdemo.specification.WarehouseSpecification;
-import aajdev.io.springjpaspecdemo.util.SpecSearchCriteria;
+import aajdev.io.springjpaspecdemo.specification.util.SpecSearchCriteria;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.domain.Specification;
 

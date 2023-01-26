@@ -1,7 +1,7 @@
 package aajdev.io.springjpaspecdemo.specification;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
-import aajdev.io.springjpaspecdemo.util.SpecSearchCriteria;
+import aajdev.io.springjpaspecdemo.specification.util.SpecSearchCriteria;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

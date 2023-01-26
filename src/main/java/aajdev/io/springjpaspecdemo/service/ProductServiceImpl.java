@@ -2,8 +2,8 @@ package aajdev.io.springjpaspecdemo.service;
 
 import aajdev.io.springjpaspecdemo.domain.Product;
 import aajdev.io.springjpaspecdemo.repository.ProductRepository;
-import aajdev.io.springjpaspecdemo.specification.builders.ProductSpecificationBuilder;
-import aajdev.io.springjpaspecdemo.util.SearchOperation;
+import aajdev.io.springjpaspecdemo.specification.builder.ProductSpecificationBuilder;
+import aajdev.io.springjpaspecdemo.specification.util.SearchOperation;
 import com.google.common.base.Joiner;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

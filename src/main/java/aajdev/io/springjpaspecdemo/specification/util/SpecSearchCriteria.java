@@ -1,4 +1,4 @@
-package aajdev.io.springjpaspecdemo.util;
+package aajdev.io.springjpaspecdemo.specification.util;
 
 public class SpecSearchCriteria {
   private String key;

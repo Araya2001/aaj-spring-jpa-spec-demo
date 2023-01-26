@@ -1,11 +1,10 @@
 package aajdev.io.springjpaspecdemo.specification;
 
 import aajdev.io.springjpaspecdemo.domain.BaseEntity;
-import aajdev.io.springjpaspecdemo.util.SpecSearchCriteria;
+import aajdev.io.springjpaspecdemo.specification.util.SpecSearchCriteria;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import lombok.Builder;
 import org.springframework.data.jpa.domain.Specification;
 
 
