@@ -1,10 +1,12 @@
 package aajdev.io.springjpaspecdemo.controller;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
+import aajdev.io.springjpaspecdemo.dto.SpecSearchCriteriaDTO;
 import aajdev.io.springjpaspecdemo.service.WarehouseService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +23,9 @@ public class WarehouseController {
     this.warehouseService = warehouseService;
   }
 
-  @GetMapping
-  public List<Warehouse> getProduct(HttpServletRequest httpServletRequest, @RequestParam(name = "search") String search) {
-    log.warn("NEW REQUEST - HTTP GET request on resource mapping \"v1/warehouse\" - IP: " + httpServletRequest.getHeader("X-FORWARDED-FOR"));
-    return warehouseService.findAllBySpec(search);
+  @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public List<Warehouse> postSearchProductsWithCriteriaSpec(HttpServletRequest httpServletRequest, @RequestBody List<SpecSearchCriteriaDTO> search) {
+    log.warn("NEW REQUEST - HTTP GET request on resource mapping \"v1/warehouse/search\" - IP: " + httpServletRequest.getHeader("X-FORWARDED-FOR"));
+    return warehouseService.findAllBySpecs(search);
   }
 }

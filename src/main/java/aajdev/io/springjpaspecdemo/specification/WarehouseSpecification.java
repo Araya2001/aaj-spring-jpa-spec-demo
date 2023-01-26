@@ -1,14 +1,14 @@
 package aajdev.io.springjpaspecdemo.specification;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
-import aajdev.io.springjpaspecdemo.specification.util.SpecSearchCriteria;
+import aajdev.io.springjpaspecdemo.dto.SpecSearchCriteriaDTO;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 public class WarehouseSpecification extends AbstractSpecification<Warehouse> {
-  public WarehouseSpecification(SpecSearchCriteria criteria) {
+  public WarehouseSpecification(SpecSearchCriteriaDTO criteria) {
     super(criteria);
   }
 

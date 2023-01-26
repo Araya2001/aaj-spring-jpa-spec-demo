@@ -1,9 +1,10 @@
 package aajdev.io.springjpaspecdemo.service;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
+import aajdev.io.springjpaspecdemo.dto.SpecSearchCriteriaDTO;
 import aajdev.io.springjpaspecdemo.repository.WarehousetRepository;
 import aajdev.io.springjpaspecdemo.specification.builder.WarehouseSpecificationBuilder;
-import aajdev.io.springjpaspecdemo.specification.util.SearchOperation;
+import aajdev.io.springjpaspecdemo.dto.SearchOperation;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,20 +25,13 @@ public class WarehouseServiceImpl extends AbstractService<Warehouse> implements 
   }
 
   @Override
-  public List<Warehouse> findAllBySpec(String search) {
+  public List<Warehouse> findAllBySpecs(List<SpecSearchCriteriaDTO> search) {
     return warehousetRepository.findAll(resolveSpec(search));
   }
 
   @Override
-  protected Specification<Warehouse> resolveSpec(String searchParameters) {
-    WarehouseSpecificationBuilder builder = new WarehouseSpecificationBuilder();
-    String operationSetExper = Joiner.on("|")
-        .join(SearchOperation.SIMPLE_OPERATION_SET);
-    Pattern pattern = Pattern.compile("(\\p{Punct}?)(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
-    Matcher matcher = pattern.matcher(searchParameters + ",");
-    while (matcher.find()) {
-      builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(5), matcher.group(4), matcher.group(6));
-    }
+  protected Specification<Warehouse> resolveSpec(List<SpecSearchCriteriaDTO> searchParameters) {
+    WarehouseSpecificationBuilder builder = new WarehouseSpecificationBuilder(searchParameters);
     return builder.build();
   }
 }
