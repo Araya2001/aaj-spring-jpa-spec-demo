@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "14cfedea-974a-4ec4-a9b8-6d245cdfdf84",
+		"name": "aaj-spring-jpa-spec-demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19531793"
+	},
+	"item": [
+		{
+			"name": "POST - Query Warehouse",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"key\": \"id\",\r\n        \"search_operation\": \"EQUALITY\",\r\n        \"value\": 1,\r\n        \"is_or_predicate\": false\r\n    },\r\n    {\r\n        \"key\": \"id\",\r\n        \"search_operation\": \"EQUALITY\",\r\n        \"value\": 2,\r\n        \"is_or_predicate\": true\r\n    },\r\n    {\r\n        \"key\": \"name\",\r\n        \"search_operation\": \"CONTAINS\",\r\n        \"value\": \"HOUSE 3\",\r\n        \"is_or_predicate\": true\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/warehouse/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"warehouse",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - Query Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"key\": \"name\",\r\n        \"search_operation\": \"CONTAINS\",\r\n        \"value\": \"SAMSUNG\",\r\n        \"is_or_predicate\": false\r\n    },\r\n    {\r\n        \"key\": \"description\",\r\n        \"search_operation\": \"CONTAINS\",\r\n        \"value\": \"32in 4k\",\r\n        \"is_or_predicate\": false\r\n    },\r\n    {\r\n        \"key\": \"id\",\r\n        \"search_operation\": \"EQUALITY\",\r\n        \"value\": 1,\r\n        \"is_or_predicate\": true\r\n    },\r\n    {\r\n        \"key\": \"id\",\r\n        \"search_operation\": \"EQUALITY\",\r\n        \"value\": 2,\r\n        \"is_or_predicate\": true\r\n    }\r\n    \r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/product/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"product",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
