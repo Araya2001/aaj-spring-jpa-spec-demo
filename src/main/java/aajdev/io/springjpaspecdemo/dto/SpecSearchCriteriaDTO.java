@@ -11,6 +11,9 @@ import lombok.Builder;
 public record SpecSearchCriteriaDTO(
     @JsonProperty("key")
     String key,
+
+    @JsonProperty("join_key")
+    String joinKey,
     @JsonProperty("search_operation")
     SearchOperation operation,
     @JsonProperty("value")

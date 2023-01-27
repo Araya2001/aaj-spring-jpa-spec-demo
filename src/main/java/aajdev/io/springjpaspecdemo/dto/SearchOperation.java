@@ -22,5 +22,7 @@ public enum SearchOperation {
   @JsonProperty("ENDS_WITH")
   ENDS_WITH,
   @JsonProperty("CONTAINS")
-  CONTAINS;
+  CONTAINS,
+  @JsonProperty("JOIN_EQUALITY")
+  JOIN_EQUALITY;
 }

@@ -3,6 +3,7 @@ package aajdev.io.springjpaspecdemo.specification;
 import aajdev.io.springjpaspecdemo.domain.BaseEntity;
 import aajdev.io.springjpaspecdemo.dto.SpecSearchCriteriaDTO;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +26,7 @@ public abstract class AbstractSpecification<T extends BaseEntity> implements Spe
       case STARTS_WITH -> criteriaBuilder.like(root.get(criteria.key()), criteria.value() + "%");
       case ENDS_WITH -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value());
       case CONTAINS -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value() + "%");
+      case JOIN_EQUALITY -> criteriaBuilder.equal(root.join(criteria.joinKey(), JoinType.INNER).get(criteria.key()),  criteria.value());
     };
   }
 
