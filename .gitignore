@@ -35,4 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
-src/main/resources/env-aaj.properties
+!src/main/resources/env.properties
+src/main/resources/env*.properties
