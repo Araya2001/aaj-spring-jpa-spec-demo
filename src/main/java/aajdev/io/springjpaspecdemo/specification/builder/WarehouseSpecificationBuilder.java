@@ -1,6 +1,7 @@
 package aajdev.io.springjpaspecdemo.specification.builder;
 
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
+import aajdev.io.springjpaspecdemo.dto.SearchOperation;
 import aajdev.io.springjpaspecdemo.dto.SpecSearchCriteriaDTO;
 import aajdev.io.springjpaspecdemo.specification.WarehouseSpecification;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +23,7 @@ public class WarehouseSpecificationBuilder {
       AtomicReference<Specification<Warehouse>> specificationAtomicReference = new AtomicReference<>(new WarehouseSpecification(params.get(0)));
       params.forEach(criteria -> {
         log.info("WAREHOUSE - CRITERIA: " + criteria);
-        if (criteria.groupCriteria() != null) {
+        if (criteria.groupCriteria() != null && criteria.operation() == SearchOperation.GROUP_CRITERIA) {
           criteria.groupCriteria().forEach(groupCriteria -> specificationAtomicReference
               .set(criteria.orPredicate() ?
                   Specification.where(specificationAtomicReference.get()).or(new WarehouseSpecification(groupCriteria)) :

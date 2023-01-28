@@ -24,5 +24,7 @@ public enum SearchOperation {
   @JsonProperty("CONTAINS")
   CONTAINS,
   @JsonProperty("JOIN_EQUALITY")
-  JOIN_EQUALITY;
+  JOIN_EQUALITY,
+  @JsonProperty("GROUP_CRITERIA")
+  GROUP_CRITERIA;
 }
