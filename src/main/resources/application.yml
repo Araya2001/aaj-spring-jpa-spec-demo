@@ -14,8 +14,8 @@ spring:
     show-sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/spec_demo
-    username: dev-ninja
-    password: ujac8ozJExiHFfcTNPd6
+    username: ${db.username}
+    password: ${db.password}
     driver-class-name: org.postgresql.Driver
   sql:
 
