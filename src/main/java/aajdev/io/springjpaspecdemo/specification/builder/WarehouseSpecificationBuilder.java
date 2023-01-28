@@ -22,10 +22,17 @@ public class WarehouseSpecificationBuilder {
       AtomicReference<Specification<Warehouse>> specificationAtomicReference = new AtomicReference<>(new WarehouseSpecification(params.get(0)));
       params.forEach(criteria -> {
         log.info("WAREHOUSE - CRITERIA: " + criteria);
-        specificationAtomicReference
-            .set(criteria.orPredicate() ?
-                Specification.where(specificationAtomicReference.get()).or(new WarehouseSpecification(criteria)) :
-                Specification.where(specificationAtomicReference.get()).and(new WarehouseSpecification(criteria)));
+        if (criteria.groupCriteria() != null) {
+          criteria.groupCriteria().forEach(groupCriteria -> specificationAtomicReference
+              .set(criteria.orPredicate() ?
+                  Specification.where(specificationAtomicReference.get()).or(new WarehouseSpecification(groupCriteria)) :
+                  Specification.where(specificationAtomicReference.get()).and(new WarehouseSpecification(groupCriteria))));
+        } else {
+          specificationAtomicReference
+              .set(criteria.orPredicate() ?
+                  Specification.where(specificationAtomicReference.get()).or(new WarehouseSpecification(criteria)) :
+                  Specification.where(specificationAtomicReference.get()).and(new WarehouseSpecification(criteria)));
+        }
       });
       return specificationAtomicReference.get();
     }
