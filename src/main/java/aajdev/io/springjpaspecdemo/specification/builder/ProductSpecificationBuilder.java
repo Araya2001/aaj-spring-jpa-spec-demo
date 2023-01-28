@@ -19,20 +19,25 @@ public class ProductSpecificationBuilder {
   }
 
   public Specification<Product> build() {
+    AtomicReference<Specification<Product>> specificationAtomicReference = new AtomicReference<>(new ProductSpecification(params.get(0)));
+    AtomicReference<Specification<Product>> groupSpecificationAtomicReference = new AtomicReference<>();
     if (!params.isEmpty()) {
-      AtomicReference<Specification<Product>> specificationAtomicReference = new AtomicReference<>(new ProductSpecification(params.get(0)));
       params.forEach(criteria -> {
         log.info("PRODUCT - CRITERIA: " + criteria);
-        if (criteria.groupCriteria() != null && criteria.operation() == SearchOperation.GROUP_CRITERIA) {
-          criteria.groupCriteria().forEach(groupCriteria -> specificationAtomicReference
-              .set(criteria.orPredicate() ?
-                  Specification.where(specificationAtomicReference.get()).or(new ProductSpecification(groupCriteria)) :
-                  Specification.where(specificationAtomicReference.get()).and(new ProductSpecification(groupCriteria))));
-        } else {
+        if (criteria.operation() != SearchOperation.GROUP_CRITERIA) {
           specificationAtomicReference
               .set(criteria.orPredicate() ?
                   Specification.where(specificationAtomicReference.get()).or(new ProductSpecification(criteria)) :
                   Specification.where(specificationAtomicReference.get()).and(new ProductSpecification(criteria)));
+        } else if (!criteria.groupCriteria().isEmpty()) {
+          groupSpecificationAtomicReference.set(new ProductSpecification(criteria.groupCriteria().get(0)));
+          criteria.groupCriteria().forEach(groupCriteria -> groupSpecificationAtomicReference
+              .set(groupCriteria.orPredicate() ?
+                  Specification.where(groupSpecificationAtomicReference.get()).or(new ProductSpecification(groupCriteria)) :
+                  Specification.where(groupSpecificationAtomicReference.get()).and(new ProductSpecification(groupCriteria))));
+          specificationAtomicReference.set(criteria.orPredicate() ?
+              Specification.where(specificationAtomicReference.get()).or(groupSpecificationAtomicReference.get()) :
+              Specification.where(specificationAtomicReference.get()).and(groupSpecificationAtomicReference.get()));
         }
       });
       return specificationAtomicReference.get();

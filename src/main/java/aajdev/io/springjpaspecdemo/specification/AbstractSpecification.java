@@ -26,7 +26,8 @@ public abstract class AbstractSpecification<T extends BaseEntity> implements Spe
       case STARTS_WITH -> criteriaBuilder.like(root.get(criteria.key()), criteria.value() + "%");
       case ENDS_WITH -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value());
       case CONTAINS -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value() + "%");
-      case JOIN_EQUALITY -> criteriaBuilder.equal(root.join(criteria.joinKey(), JoinType.INNER).get(criteria.key()),  criteria.value());
+      case JOIN_EQUALITY -> criteriaBuilder.equal(root.join(criteria.joinKey(), JoinType.INNER).get(criteria.key()), criteria.value());
+      case GROUP_CRITERIA -> null;
     };
   }
 
