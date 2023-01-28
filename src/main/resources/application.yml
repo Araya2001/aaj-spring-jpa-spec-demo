@@ -18,7 +18,6 @@ spring:
     password: ${db.password}
     driver-class-name: org.postgresql.Driver
   sql:
-
     init:
       mode: always
   application:

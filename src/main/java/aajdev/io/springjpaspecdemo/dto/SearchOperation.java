@@ -26,5 +26,5 @@ public enum SearchOperation {
   @JsonProperty("JOIN_EQUALITY")
   JOIN_EQUALITY,
   @JsonProperty("GROUP_CRITERIA")
-  GROUP_CRITERIA;
+  GROUP_CRITERIA
 }
