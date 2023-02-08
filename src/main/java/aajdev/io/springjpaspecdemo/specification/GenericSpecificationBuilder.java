@@ -16,7 +16,6 @@ public class GenericSpecificationBuilder<T> {
       AtomicReference<Specification<T>> groupSpecificationAtomicReference = new AtomicReference<>();
       if (!params.isEmpty()) {
         params.forEach(criteria -> {
-          log.info("PRODUCT - CRITERIA: " + criteria);
           if (criteria.operation() != SearchOperation.GROUP_CRITERIA) {
             specificationAtomicReference
                 .set(criteria.orPredicate() ?
