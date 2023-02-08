@@ -3,18 +3,15 @@ package aajdev.io.springjpaspecdemo.service;
 import aajdev.io.springjpaspecdemo.domain.Warehouse;
 import aajdev.io.springjpaspecdemo.dto.SpecSearchCriteriaDTO;
 import aajdev.io.springjpaspecdemo.repository.WarehousetRepository;
-import aajdev.io.springjpaspecdemo.specification.builder.WarehouseSpecificationBuilder;
-import aajdev.io.springjpaspecdemo.dto.SearchOperation;
-import com.google.common.base.Joiner;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
+@Log4j2
 @SuppressWarnings("Duplicates")
 public class WarehouseServiceImpl extends AbstractService<Warehouse> implements WarehouseService {
   private final WarehousetRepository warehousetRepository;
@@ -26,12 +23,11 @@ public class WarehouseServiceImpl extends AbstractService<Warehouse> implements 
 
   @Override
   public List<Warehouse> findAllBySpecs(List<SpecSearchCriteriaDTO> search) {
-    return warehousetRepository.findAll(resolveSpec(search));
-  }
-
-  @Override
-  protected Specification<Warehouse> resolveSpec(List<SpecSearchCriteriaDTO> searchParameters) {
-    WarehouseSpecificationBuilder builder = new WarehouseSpecificationBuilder(searchParameters);
-    return builder.build();
+    try {
+      return warehousetRepository.findAll(resolveSpec(search));
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    return new ArrayList<>();
   }
 }
