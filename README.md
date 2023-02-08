@@ -41,12 +41,42 @@ public class ProductController {
 }
 ```
 
+### Interfaz Genérica
+
+```java
+
+public interface GenericEntityService<T> {
+  List<T> findAllBySpecs(List<SpecSearchCriteriaDTO> search);
+}
+
+```
+
 ### Interfaz Servicio
 
 ```java
-public interface ProductService {
-  List<Product> findAllBySpecs(List<SpecSearchCriteriaDTO> search);
+
+public interface ProductService extends GenericEntityService<Product> {
 }
+
+```
+
+### Clase Abstracta de Servicio
+
+```java
+
+@Log4j2
+public abstract class AbstractService<T> {
+  protected Specification<T> resolveSpec(List<SpecSearchCriteriaDTO> searchParameters) {
+    try {
+      GenericSpecificationBuilder<T> builder = new GenericSpecificationBuilder<>();
+      return builder.buildFromParams(searchParameters);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    return null;
+  }
+}
+
 ```
 
 ### Implementación de Interfaz
@@ -66,13 +96,12 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
 
   @Override
   public List<Product> findAllBySpecs(List<SpecSearchCriteriaDTO> search) {
-    return productRepository.findAll(resolveSpec(search));
-  }
-
-  @Override
-  protected Specification<Product> resolveSpec(List<SpecSearchCriteriaDTO> searchParameters) {
-    ProductSpecificationBuilder builder = new ProductSpecificationBuilder(searchParameters);
-    return builder.build();
+    try {
+      return productRepository.findAll(resolveSpec(search));
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    return new ArrayList<>();
   }
 }
 ```
@@ -83,7 +112,6 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
-  List<Product> findAllByWarehouse(Warehouse warehouse);
 }
 ```
 
@@ -109,64 +137,51 @@ de tener que definir métodos en los repositorios o consultas manuales con `Enti
 Tomando como caso la entidad `Product` que ya ha sido referenciada en los ejemplos
 mostrados anteriormente, se requieren múltiples elementos para hacer que esto funcione, los cuales serían los siguientes:
 
-### Especificación Abstracta
+### Especificación Genérica
 
 ```java
 
-public abstract class AbstractSpecification<T extends BaseEntity> implements Specification<T> {
+@Log4j2
+public class GenericSpecification<T> implements Specification<T> {
   private SpecSearchCriteriaDTO criteria;
-
-  public AbstractSpecification(SpecSearchCriteriaDTO criteria) {
-    this.criteria = criteria;
-  }
 
   // AAJ - ESTE ME GUSTA, USA RECORD
   static Predicate getPredicate(Root<?> root, CriteriaBuilder criteriaBuilder, SpecSearchCriteriaDTO criteria) {
-    return switch (criteria.operation()) {
-      case EQUALITY -> criteriaBuilder.equal(root.get(criteria.key()), criteria.value());
-      case NEGATION -> criteriaBuilder.notEqual(root.get(criteria.key()), criteria.value());
-      case GREATER_THAN -> criteriaBuilder.greaterThan(root.get(criteria.key()), criteria.value().toString());
-      case LESS_THAN -> criteriaBuilder.lessThan(root.get(criteria.key()), criteria.value().toString());
-      case LIKE -> criteriaBuilder.like(root.get(criteria.key()), criteria.value().toString());
-      case STARTS_WITH -> criteriaBuilder.like(root.get(criteria.key()), criteria.value() + "%");
-      case ENDS_WITH -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value());
-      case CONTAINS -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value() + "%");
-      case JOIN_EQUALITY -> criteriaBuilder.equal(root.join(criteria.joinKey(), JoinType.INNER).get(criteria.key()), criteria.value());
-      case GROUP_CRITERIA -> null;
-    };
+    try {
+      return switch (criteria.operation()) {
+        case EQUALITY -> criteriaBuilder.equal(root.get(criteria.key()), criteria.value());
+        case NEGATION -> criteriaBuilder.notEqual(root.get(criteria.key()), criteria.value());
+        case GREATER_THAN -> criteriaBuilder.greaterThan(root.get(criteria.key()), criteria.value().toString());
+        case LESS_THAN -> criteriaBuilder.lessThan(root.get(criteria.key()), criteria.value().toString());
+        case LIKE -> criteriaBuilder.like(root.get(criteria.key()), criteria.value().toString());
+        case STARTS_WITH -> criteriaBuilder.like(root.get(criteria.key()), criteria.value() + "%");
+        case ENDS_WITH -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value());
+        case CONTAINS -> criteriaBuilder.like(root.get(criteria.key()), "%" + criteria.value() + "%");
+        case JOIN_EQUALITY -> criteriaBuilder.equal(root.join(criteria.joinKey(), JoinType.INNER).get(criteria.key()), criteria.value());
+        case GROUP_CRITERIA -> null;
+      };
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    return null;
   }
 
   public SpecSearchCriteriaDTO getCriteria() {
     return criteria;
   }
 
-  public void setCriteria(SpecSearchCriteriaDTO criteria) {
+  public Specification<T> getSpecification(SpecSearchCriteriaDTO criteria) {
     this.criteria = criteria;
-  }
-}
-```
-
-### Especificación concreta
-
-Con la especificación abstracta y genérica nos aseguramos de que al realizar la construcción del Criteria, no tengamos que reescribir todo una y otra vez, implementando la
-interfaz, de forma genérica, de `Specification<?>`.
-Una vez se aplica herencia sobre una clase concreta, este va a poder hacer uso de los métodos de construcción de `Criteria` y quedará con la minima cantidad de código.
-
-```java
-
-public class ProductSpecification extends AbstractSpecification<Product> {
-  public ProductSpecification(SpecSearchCriteriaDTO criteria) {
-    super(criteria);
+    return this;
   }
 
   @Override
-  public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-    return getPredicate(root, criteriaBuilder, super.getCriteria());
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+    return getPredicate(root, criteriaBuilder, this.getCriteria());
   }
 }
-```
 
-> El método `toPredicate` se implementa gracias a la interfaz `Specification<?>`
+```
 
 ### Constructor de la Especificación
 
@@ -175,40 +190,39 @@ Para Generar especificaciones que contengan los `Criteria` es necesario generar 
 ```java
 
 @Log4j2
-public class ProductSpecificationBuilder {
-  private final List<SpecSearchCriteriaDTO> params;
-
-  public ProductSpecificationBuilder(List<SpecSearchCriteriaDTO> params) {
-    this.params = params;
-  }
-
-  public Specification<Product> build() {
-    AtomicReference<Specification<Product>> specificationAtomicReference = new AtomicReference<>(new ProductSpecification(params.get(0)));
-    AtomicReference<Specification<Product>> groupSpecificationAtomicReference = new AtomicReference<>();
-    if (!params.isEmpty()) {
-      params.forEach(criteria -> {
-        log.info("PRODUCT - CRITERIA: " + criteria);
-        if (criteria.operation() != SearchOperation.GROUP_CRITERIA) {
-          specificationAtomicReference
-              .set(criteria.orPredicate() ?
-                  Specification.where(specificationAtomicReference.get()).or(new ProductSpecification(criteria)) :
-                  Specification.where(specificationAtomicReference.get()).and(new ProductSpecification(criteria)));
-        } else if (!criteria.groupCriteria().isEmpty()) {
-          groupSpecificationAtomicReference.set(new ProductSpecification(criteria.groupCriteria().get(0)));
-          criteria.groupCriteria().forEach(groupCriteria -> groupSpecificationAtomicReference
-              .set(groupCriteria.orPredicate() ?
-                  Specification.where(groupSpecificationAtomicReference.get()).or(new ProductSpecification(groupCriteria)) :
-                  Specification.where(groupSpecificationAtomicReference.get()).and(new ProductSpecification(groupCriteria))));
-          specificationAtomicReference.set(criteria.orPredicate() ?
-              Specification.where(specificationAtomicReference.get()).or(groupSpecificationAtomicReference.get()) :
-              Specification.where(specificationAtomicReference.get()).and(groupSpecificationAtomicReference.get()));
-        }
-      });
-      return specificationAtomicReference.get();
+public class GenericSpecificationBuilder<T> {
+  public Specification<T> buildFromParams(List<SpecSearchCriteriaDTO> params) {
+    try {
+      AtomicReference<Specification<T>> specificationAtomicReference = new AtomicReference<>(new GenericSpecification<T>().getSpecification(params.get(0)));
+      AtomicReference<Specification<T>> groupSpecificationAtomicReference = new AtomicReference<>();
+      if (!params.isEmpty()) {
+        params.forEach(criteria -> {
+          if (criteria.operation() != SearchOperation.GROUP_CRITERIA) {
+            specificationAtomicReference
+                .set(criteria.orPredicate() ?
+                    Specification.where(specificationAtomicReference.get()).or(new GenericSpecification<T>().getSpecification(criteria)) :
+                    Specification.where(specificationAtomicReference.get()).and(new GenericSpecification<T>().getSpecification(criteria)));
+          } else if (!criteria.groupCriteria().isEmpty()) {
+            groupSpecificationAtomicReference.set(new GenericSpecification<T>().getSpecification(criteria.groupCriteria().get(0)));
+            criteria.groupCriteria().forEach(groupCriteria -> groupSpecificationAtomicReference
+                .set(groupCriteria.orPredicate() ?
+                    Specification.where(groupSpecificationAtomicReference.get()).or(new GenericSpecification<T>().getSpecification(groupCriteria)) :
+                    Specification.where(groupSpecificationAtomicReference.get()).and((new GenericSpecification<T>().getSpecification(groupCriteria)))));
+            specificationAtomicReference.set(criteria.orPredicate() ?
+                Specification.where(specificationAtomicReference.get()).or(groupSpecificationAtomicReference.get()) :
+                Specification.where(specificationAtomicReference.get()).and(groupSpecificationAtomicReference.get()));
+          }
+        });
+        return specificationAtomicReference.get();
+      }
+      return null;
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
     }
     return null;
   }
 }
+
 ```
 
 > Es visible qué existe una cantidad de código más grande que contiene lógica de ciertos operadores.

@@ -10,5 +10,4 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
-  List<Product> findAllByWarehouse(Warehouse warehouse);
 }
