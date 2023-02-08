@@ -9,8 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class GenericSpecification<T> implements Specification<T> {
   private SpecSearchCriteriaDTO criteria;
 
-  // AAJ - ESTE ME GUSTA, USA RECORD
-  static Predicate getPredicate(Root<?> root, CriteriaBuilder criteriaBuilder, SpecSearchCriteriaDTO criteria) {
+  protected static Predicate getPredicate(Root<?> root, CriteriaBuilder criteriaBuilder, SpecSearchCriteriaDTO criteria) {
     try {
       return switch (criteria.operation()) {
         case EQUALITY -> criteriaBuilder.equal(root.get(criteria.key()), criteria.value());
